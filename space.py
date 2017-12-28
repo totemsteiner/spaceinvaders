@@ -9,12 +9,17 @@ import random
 wn = turtle.Screen()
 wn.bgcolor("black")
 wn.title("Space Invaders")
+wn.bgpic("space.gif")
+
+#register the shapes
+turtle.register_shape("xwing.gif")
+turtle.register_shape("T.gif")
 
 #draw border
 border_pen = turtle.Turtle()
 border_pen.speed(0)
 border_pen.penup()
-border_pen.setposition(-300,-300)
+border_pen.setposition(-2250,-300)
 border_pen.pendown()
 border_pen.pensize(3)
 for side in range(4):
@@ -25,11 +30,25 @@ border_pen.hideturtle()
 #creat player turtle
 player = turtle.Turtle()
 player.color("yellow")
-player.shape("triangle")
+player.shape("xwing.gif")
 player.penup()
 player.speed(0)
 player.setposition(0,-250)
 player.setheading(90)
+
+#scoring
+score = 0
+
+#draw score
+score_pen = turtle.Turtle()
+score_pen.speed(0)
+score_pen.color("white")
+score_pen.penup()
+score_pen.setposition(-300, 260)
+scorestring = "Score: %s" %score
+score_pen.write(scorestring, False, align="left", 
+        font=("Arial", 14, "normal"))
+score_pen.hideturtle()
 
 playerspeed = 15
 enemyspeed = 2
@@ -45,7 +64,7 @@ for i in range (number_of_enemies):
 
 for enemy in enemies:
     enemy.color("red")
-    enemy.shape("circle")
+    enemy.shape("T.gif")
     enemy.penup()
     enemy.speed(0)
     x = random.randint(-200, 200)
@@ -91,14 +110,7 @@ def isCollision(t1, t2):
 
 
 
-#create enemy
-enemy = turtle.Turtle()
-enemy.color("red")
-enemy.shape("circle")
-enemy.penup()
-enemy.speed(0)
-enemy.setposition(-200,250)
-enemy.setheading(90)
+
 #check collision bullet - enemy
 
 #move player left and right
@@ -134,16 +146,18 @@ while True:
     
         #move the enemy back and down
         if enemy.xcor() > 290:
-            y = enemy.ycor()
-            y -= 30
+            for e in enemies:
+                y = e.ycor()
+                y -= 30
+                e.sety(y)
             enemyspeed *= -1
-            enemy.sety(y)
-
         if enemy.xcor() < -290:
-            y = enemy.ycor()
-            y -= 30
+            for e in enemies:
+                y = e.ycor()
+                y -= 30
+                e.sety(y)
             enemyspeed *= -1
-            enemy.sety(y)
+            
     
         if isCollision(bullet, enemy):
             #Reset bullet
@@ -154,6 +168,13 @@ while True:
             x = random.randint(-200, 200)
             y = random.randint(100, 250)
             enemy.setposition(x, y)
+            
+            #update score
+            score += 10
+            scorestring = "Score: %s" %score
+            score_pen.clear()
+            score_pen.write(scorestring, False, align="left", 
+                    font=("Arial", 14, "normal")) 
             
         if isCollision(player, enemy):
             player.hideturtle()
